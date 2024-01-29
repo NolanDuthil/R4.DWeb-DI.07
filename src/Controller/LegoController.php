@@ -1,51 +1,93 @@
 <?php
 
 
-/* indique où "vit" ce fichier */
 
+/* indique où "vit" ce fichier */
 namespace App\Controller;
 
 
 /* indique l'utilisation du bon bundle pour gérer nos routes */
 
+use stdClass;
+use App\Entity\Lego as Lego;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use stdClass;
-use App\Entity\Lego;
-
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
-
 class LegoController extends AbstractController
 {
-    // L’attribute #[Route] indique ici que l'on associe la route
-    // "/" à la méthode home pour que Symfony l'exécute chaque fois
-    // que l'on accède à la racine de notre site.
-    
-    private $legos;
-    public function __construct()
-    {
-        $this->legos = file_get_contents("../src/data.json");
-        $this->legos = json_decode($this->legos);
-        var_dump($this->legos);
-        
-    }
+   private $legos = [];
 
-
-    #[Route('/',)]
-    public function home(): Response
-    {
-        foreach ($this->legos as $lego => $value ) {
-            new Lego($lego["id"], $lego["name"], $lego["collection"]);
+   
+   function __construct() {
+        $file = file_get_contents('/var/www/html/src/data.json');
+        $file = json_decode($file);
+        foreach ($file as $lego) {
+            $leg = new Lego($lego->id, $lego->name, $lego->collection);
+            $leg->setDescription($lego->description);
+            $leg->setPrice($lego->price);
+            $leg->setPieces($lego->pieces);
+            $leg->setBoxImage($lego->images->box);
+            $leg->setLegoImage($lego->images->bg);
+            array_push($this->legos, $leg);
         }
-        return $value;
-        die();
+   }
+
+
+
+    #[Route('/', )]
+    public function homeAll(): Response
+    {  
+        return $this->render("lego.html.twig", [
+            'legos' => $this->legos,
+        ]);
+    }
+    
+    // #[Route('/creator', )]
+    // public function homeCreator(): Response
+    // {
+
+    //     $this->legos = array_filter($this->legos, function ($var) {
+    //         return $var->collection == "Creator";
+    //     });
+
+    //     return $this->render("lego.html.twig", [
+    //         'legos' => $this->legos,
+    //     ]);
+    // }
+
+    // #[Route('/star_wars', )]
+    // public function homeStarWars(): Response
+    // {
+
+    //     $this->legos = array_filter($this->legos, function ($var) {
+    //         return $var->collection == "Star Wars";
+    //     });
+
+    //     return $this->render("lego.html.twig", [
+    //         'legos' => $this->legos,
+    //     ]);
+    // }
+
+    // #[Route('/creator_expert', )]
+    // public function homeCreatorExpert(): Response
+    // {
+
+    //     $this->legos = array_filter($this->legos, function ($var) {
+    //         return $var->collection == "Creator Expert";
+    //     });
+
+    //     return $this->render("lego.html.twig", [
+    //         'legos' => $this->legos,
+    //     ]);
+    // }
+
+
+    #[Route('/{collection}', 'filter_by_collection')]
+    public function filter($collection): Response
+    {
+        die($collection);
     }
 
-    #[Route('/me',)]
-    public function me()
-    {
-        die("Nolan");
-    }
 }
