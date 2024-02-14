@@ -15,6 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Loader\Configurator\CollectionConfigurator;
+use App\Service\CreditsGenerator;
+use App\Service\DatabaseInterface;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
@@ -93,15 +95,20 @@ class LegoController extends AbstractController
     {
 
         $newlegos = [];
-        foreach($this->legos as $lego){
-            if(strtolower($lego->collection) == str_replace("_"," ",$collection)){
+        foreach ($this->legos as $lego) {
+            if (strtolower($lego->collection) == str_replace("_", " ", $collection)) {
                 array_push($newlegos, $lego);
             };
-
         }
 
         return $this->render("lego.html.twig", [
             'legos' => $newlegos,
         ]);
+    }
+
+    #[Route('/credits', 'credits')]
+    public function credits(CreditsGenerator $credits): Response
+    {
+        return new Response($credits->getCredits());
     }
 }
