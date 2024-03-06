@@ -11,42 +11,28 @@ namespace App\Controller;
 
 use stdClass;
 use App\Entity\Lego as Lego;
+use App\Service\CreditsGenerator;
+use App\Service\DatabaseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Loader\Configurator\CollectionConfigurator;
-use App\Service\CreditsGenerator;
-use App\Service\DatabaseInterface;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
 class LegoController extends AbstractController
 {
-    private $legos = [];
+    public $coll;
 
 
-    function __construct()
-    {
-        $file = file_get_contents('/var/www/html/src/data.json');
-        $file = json_decode($file);
-        foreach ($file as $lego) {
-            $leg = new Lego($lego->id, $lego->name, $lego->collection);
-            $leg->setDescription($lego->description);
-            $leg->setPrice($lego->price);
-            $leg->setPieces($lego->pieces);
-            $leg->setBoxImage($lego->images->box);
-            $leg->setLegoImage($lego->images->bg);
-            array_push($this->legos, $leg);
-        }
-    }
+    #[Route('/', )]
+    public function homeAll(DatabaseInterface $lego): Response
+    {  
 
-
-
-    #[Route('/',)]
-    public function homeAll(): Response
-    {
+        $this->coll = $lego->getAllCollection();
+        // dump($this->coll);
         return $this->render("lego.html.twig", [
-            'legos' => $this->legos,
+            'legos' => $lego->getAllLegos(),
+            'collection' =>$lego->getAllCollection(),
         ]);
     }
 
@@ -90,19 +76,14 @@ class LegoController extends AbstractController
     // }*/
 
 
-    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'creator|star_wars|creator_expert'])]
-    public function filter($collection): Response
+    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator|Star Wars|Creator Expert|Harry Potter'])]
+    public function filter($collection, DatabaseInterface $lego): Response
     {
 
-        $newlegos = [];
-        foreach ($this->legos as $lego) {
-            if (strtolower($lego->collection) == str_replace("_", " ", $collection)) {
-                array_push($newlegos, $lego);
-            };
-        }
 
         return $this->render("lego.html.twig", [
-            'legos' => $newlegos,
+            'legos' => $lego->getLegosByCollection($collection),
+            'collection' =>$lego->getAllCollection()
         ]);
     }
 
@@ -111,4 +92,7 @@ class LegoController extends AbstractController
     {
         return new Response($credits->getCredits());
     }
+
+
+
 }
