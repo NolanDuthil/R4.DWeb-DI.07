@@ -103,12 +103,12 @@ class LegoController extends AbstractController
         $l->setDescription("Le rock est mort");
         $l->setPrice(80.00);
         $l->setPieces(4);
-        $l->setBoxImage("./eddy.jpg");
-        $l->setLegoImage("./eddy.jpg");
-        dd($l);
+        $l->setBoxImage("./eddy.jfif");
+        $l->setLegoImage("./eddy.jfif");
 
         $entityManager->persist($l);
         $entityManager->flush();
+        return new Response('Lego saved with id: '.$l->getId());
     }
 
 
