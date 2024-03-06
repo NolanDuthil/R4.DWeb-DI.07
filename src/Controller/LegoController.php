@@ -16,6 +16,7 @@ use App\Service\DatabaseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
@@ -92,6 +93,24 @@ class LegoController extends AbstractController
     {
         return new Response($credits->getCredits());
     }
+
+    #[Route('/test', 'test')]
+    public function test(EntityManagerInterface $entityManager): Response
+    {
+        $l = new Lego(1234);
+        $l->setName("Eddy le quartier");
+        $l->setCollection("Rock");
+        $l->setDescription("Le rock est mort");
+        $l->setPrice(80.00);
+        $l->setPieces(4);
+        $l->setBoxImage("./eddy.jpg");
+        $l->setLegoImage("./eddy.jpg");
+        dd($l);
+
+        $entityManager->persist($l);
+        $entityManager->flush();
+    }
+
 
 
 
