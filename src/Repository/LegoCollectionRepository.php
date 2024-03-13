@@ -21,23 +21,6 @@ class LegoCollectionRepository extends ServiceEntityRepository
         parent::__construct($registry, LegoCollection::class);
     }
 
-    public function findAllCollections(): array
-    {
-        return $this->createQueryBuilder('l')
-            ->select('DISTINCT l.collection')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findByCollection(string $collection): array
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.collection = :collection')
-            ->setParameter('collection', $collection)
-            ->getQuery()
-            ->getResult();
-    }
-
     //    /**
     //     * @return LegoCollection[] Returns an array of LegoCollection objects
     //     */
