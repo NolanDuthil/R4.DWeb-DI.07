@@ -23,18 +23,18 @@ use App\Repository\LegoCollectionRepository;
 
 class LegoController extends AbstractController
 {
-    public function __construct(private LegoRepository $legoRepository, private LegoCollectionRepository $legoCollectionRepository) {}
+    public function __construct() {}
 
     #[Route('/', )]
-    public function homeAll(): Response
+    public function homeAll(LegoRepository $legoRepository, LegoCollectionRepository $legoCollectionRepository): Response
     {  
 
         // $this->coll = $lego->getAllCollection();
         // dump($this->coll);
         // dd($this->legoRepository->findAll());
         return $this->render("lego.html.twig", [
-            'legos' => $this->legoRepository->findAll(),
-            'collection' =>$this->legoCollectionRepository->findAll(),
+            'legos' => $legoRepository->findAll(),
+            'collection' =>$legoCollectionRepository->findAll(),
         ]);
     }
 
