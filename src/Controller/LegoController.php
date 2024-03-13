@@ -17,19 +17,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\LegoRepository;
+use App\Repository\LegoCollectionRepository;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
 class LegoController extends AbstractController
 {
-    public function __construct(private LegoRepository $legoRepository) {}
+    public function __construct(private LegoRepository $legoRepository, private LegoCollectionRepository $legoCollectionRepository) {}
 
     #[Route('/', )]
     public function homeAll(): Response
     {  
+
+        // $this->coll = $lego->getAllCollection();
+        // dump($this->coll);
+        // dd($this->legoRepository->findAll());
         return $this->render("lego.html.twig", [
             'legos' => $this->legoRepository->findAll(),
-            'collection' =>$this->legoRepository->findAllCollections(),
+            'collection' =>$this->legoCollectionRepository->findAll(),
         ]);
     }
 
@@ -90,12 +95,12 @@ class LegoController extends AbstractController
         return new Response($credits->getCredits());
     }
 
-    #[Route('/test', 'test')]
+   /* #[Route('/test', 'test')]
     public function test(EntityManagerInterface $entityManager): Response
     {
         $l = new Lego(1234);
         $l->setName("Eddy le quartier");
-        $l->setCollection("Rock");
+        $l->setCollection();
         $l->setDescription("Le rock est mort");
         $l->setPrice(80.00);
         $l->setPieces(4);
@@ -106,7 +111,7 @@ class LegoController extends AbstractController
         $entityManager->flush();
         return new Response('Lego saved with id: '.$l->getId());
     }
-
+*/
 
 
 
