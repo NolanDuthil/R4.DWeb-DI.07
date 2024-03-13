@@ -12,28 +12,24 @@ namespace App\Controller;
 use stdClass;
 use App\Entity\Lego as Lego;
 use App\Service\CreditsGenerator;
-use App\Service\DatabaseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\LegoRepository;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
 
 class LegoController extends AbstractController
 {
-    public $coll;
-
+    public function __construct(private LegoRepository $legoRepository) {}
 
     #[Route('/', )]
-    public function homeAll(DatabaseInterface $lego): Response
+    public function homeAll(): Response
     {  
-
-        $this->coll = $lego->getAllCollection();
-        // dump($this->coll);
         return $this->render("lego.html.twig", [
-            'legos' => $lego->getAllLegos(),
-            'collection' =>$lego->getAllCollection(),
+            'legos' => $this->legoRepository->findAll(),
+            'collection' =>$this->legoRepository->findAllCollections(),
         ]);
     }
 
@@ -78,13 +74,13 @@ class LegoController extends AbstractController
 
 
     #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator|Star Wars|Creator Expert|Harry Potter'])]
-    public function filter($collection, DatabaseInterface $lego): Response
+    public function filter($collection, LegoRepository $lego): Response
     {
 
 
         return $this->render("lego.html.twig", [
-            'legos' => $lego->getLegosByCollection($collection),
-            'collection' =>$lego->getAllCollection()
+            'legos' => $lego->findByCollection($collection),
+            'collection' =>$lego->findAllCollections()
         ]);
     }
 
