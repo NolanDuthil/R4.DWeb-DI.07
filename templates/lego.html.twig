@@ -2,14 +2,14 @@
 {% block body %}
 <nav>
     <a href="/">All</a> |
-    <a href="/Creator">Creator</a> |
+    {# <a href="/Creator">Creator</a> |
     <a href="/Creator_Expert">Creator Expert</a> |
     <a href="/Star_Wars">Star Wars</a> |
-    <a href="/Harry_Potter">Harry Potter</a>
+    <a href="/Harry_Potter">Harry Potter</a> #}
 
-    {# {% for coll in collection %} #}
-    {# <a href="/{{coll.collection}}">{{coll.collection}}</a> | #}
-    {# {% endfor %} #}
+    {% for coll in collection %}
+     <a href="/{{coll.name}}">{{coll.name}}</a> | 
+     {% endfor %} 
 
 </nav>
 {% for lego in legos %}

@@ -12,80 +12,39 @@ namespace App\Controller;
 use stdClass;
 use App\Entity\Lego as Lego;
 use App\Service\CreditsGenerator;
+use App\Entity\LegoCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+
 use App\Repository\LegoRepository;
 use App\Repository\LegoCollectionRepository;
 
 /* le nom de la classe doit être cohérent avec le nom du fichier */
-
 class LegoController extends AbstractController
 {
-    public function __construct() {}
+
+    public function __construct(private LegoRepository $legoRepository, private LegoCollectionRepository $legoCollectionRepository) {}
 
     #[Route('/', )]
-    public function homeAll(LegoRepository $legoRepository, LegoCollectionRepository $legoCollectionRepository): Response
-    {  
-
-        // $this->coll = $lego->getAllCollection();
-        // dump($this->coll);
-        // dd($this->legoRepository->findAll());
+    public function homeAll(): Response
+    {
         return $this->render("lego.html.twig", [
-            'legos' => $legoRepository->findAll(),
-            'collection' =>$legoCollectionRepository->findAll(),
+            'legos' => $this->legoRepository->findAll(),
+            'collection' =>$this->legoCollectionRepository->findAll(),
         ]);
     }
 
-    /*#[Route('/creator', )]
-     public function homeCreator(): Response
-     {
 
-        $this->legos = array_filter($this->legos, function ($var) {
-             return $var->collection == "Creator";
-         });
-
-         return $this->render("lego.html.twig", [
-            'legos' => $this->legos,
-        ]);
-     }
-
-    // #[Route('/star_wars', )]
-    // public function homeStarWars(): Response
-    // {
-
-    //     $this->legos = array_filter($this->legos, function ($var) {
-    //         return $var->collection == "Star Wars";
-    //     });
-
-    //     return $this->render("lego.html.twig", [
-    //         'legos' => $this->legos,
-    //     ]);
-    // }
-
-    // #[Route('/creator_expert', )]
-    // public function homeCreatorExpert(): Response
-    // {
-
-    //     $this->legos = array_filter($this->legos, function ($var) {
-    //         return $var->collection == "Creator Expert";
-    //     });
-
-    //     return $this->render("lego.html.twig", [
-    //         'legos' => $this->legos,
-    //     ]);
-    // }*/
-
-
-    #[Route('/{collection}', 'filter_by_collection', requirements: ['collection' => 'Creator|Star Wars|Creator Expert|Harry Potter'])]
-    public function filter($collection, LegoRepository $lego): Response
+    #[Route('/{name}', 'filter_by_name', requirements: ['name' => 'Creator|Star Wars|Creator Expert|Harry Potter'])]
+    public function filter($name, LegoCollection $legoCollection): Response
     {
 
-
+        // dd($this->legoRepository->findByCollection($name));
         return $this->render("lego.html.twig", [
-            'legos' => $lego->findByCollection($collection),
-            'collection' =>$lego->findAllCollections()
+            'legos' => $legoCollection->getLegos(),
+            'collection' =>$this->legoCollectionRepository->findAll(),
         ]);
     }
 
@@ -95,24 +54,26 @@ class LegoController extends AbstractController
         return new Response($credits->getCredits());
     }
 
-   /* #[Route('/test', 'test')]
-    public function test(EntityManagerInterface $entityManager): Response
+    // #[Route('/test', 'test')]
+    // public function test(EntityManagerInterface $entityManager): Response
+    // {
+    //     $l = new Lego(1234);
+    //     $l->setName("un beau Lego");
+    //     $l->setCollection("Lego espace");
+    //     $l->setPrice(32.00);
+    //     $l->setPieces(122);
+    //     $l->setDescription("Lego espace");
+    //     $l->setLegoImage("Lego espace");
+    //     $l->setBoxImage("Lego espace");
+    //     $entityManager->persist($l);
+    //     $entityManager->flush();
+    //     dd($l);
+    // }
+
+    #[Route('/test/{name}', 'test')]
+    public function test(LegoCollection $collection): Response
     {
-        $l = new Lego(1234);
-        $l->setName("Eddy le quartier");
-        $l->setCollection();
-        $l->setDescription("Le rock est mort");
-        $l->setPrice(80.00);
-        $l->setPieces(4);
-        $l->setBoxImage("./eddy.jfif");
-        $l->setLegoImage("./eddy.jfif");
-
-        $entityManager->persist($l);
-        $entityManager->flush();
-        return new Response('Lego saved with id: '.$l->getId());
+        dd($collection);
     }
-*/
-
-
 
 }
