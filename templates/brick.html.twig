@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<nav>
+    <a href="/">Home</a> |
+    {# <a href="/Creator">Creator</a> |
+    <a href="/Creator_Expert">Creator Expert</a> |
+    <a href="/Star_Wars">Star Wars</a> |
+    <a href="/Harry_Potter">Harry Potter</a> #}
+
+    {% for coll in collection %}
+     <a href="/{{coll.name}}">{{coll.name}}</a> | 
+     {% endfor %} 
+
+     <a href="/brick_store">Pick a brick</a>
+
+</nav>
+{% for brick in bricks %}
+
+<div class="lego_card">
+      <div class="info_section">
+        <div class="lego_header">
+          <img class="locandina" src="/images/{{brick.image}}"/>
+          <h1>{{brick.name}}</h1>
+          <p class="price">{{brick.price}}€</p><br>
+          <a href="index.php?buy={{brick.id}}"><button>Choisir</button></a>
+        </div>
+
+      </div>
+</div>
+{% endfor %}
+{% endblock %}
